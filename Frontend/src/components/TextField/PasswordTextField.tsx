@@ -7,21 +7,26 @@ import { faLock } from '@fortawesome/free-solid-svg-icons'
 import { useToggle } from '~/hooks'
 import { TextFieldIndicator } from '~/components/Indicator'
 import { colors } from '~/styles'
+import { FieldError } from 'react-hook-form'
 
 interface PasswordTextFieldProps {
   value: string
-  indicator: string
   onChange: (value: string) => void
+  indicator: string
+  error: FieldError
   label?: string
   placeholder?: string
+  autoComplete?: string
 }
 
 export function PasswordTextField({
   value,
-  indicator,
   onChange,
+  indicator,
+  error,
   label = 'Password',
-  placeholder = 'Enter password here'
+  placeholder = 'Enter password here',
+  autoComplete = 'password'
 }: PasswordTextFieldProps) {
   const { value: showPassword, toggle: toggleShowPassword } = useToggle(false)
 
@@ -78,9 +83,11 @@ export function PasswordTextField({
           }
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          error={!!error}
+          autoComplete={autoComplete}
         />
       </FormControl>
-      <TextFieldIndicator indicator={indicator} />
+      <TextFieldIndicator indicator={error ? indicator : 'Valid'} color={error ? undefined : colors.valid} />
     </div>
   )
 }

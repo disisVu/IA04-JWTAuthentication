@@ -8,7 +8,9 @@ const colors = {
   text_secondary: '#6C757D',
   button_secondary: '#eee',
   border: '#bababa',
-  input_background: '#fafbff'
+  input_background: '#fafbff',
+  valid: '#4caf50',
+  error: '#dc2626'
 }
 
 export { colors }

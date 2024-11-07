@@ -16,7 +16,9 @@ export function PasswordComplexityBar({ complexity }: PasswordComplexityBarProps
       case 4:
         return '85%' // Strong
       case 5:
-        return '100%' // Very strong
+        return '95%' // Very strong
+      case 6:
+        return '100%' // Excellent
       default:
         return '0%'
     }
@@ -32,9 +34,11 @@ export function PasswordComplexityBar({ complexity }: PasswordComplexityBarProps
       case 3:
         return '#FF6D00' // Orange
       case 4:
-        return '#2ECC40' // Green
+        return colors.valid // Green
       case 5:
         return colors.primary // Blue
+      case 6:
+        return '#7338A0' // Purple
       default:
         return '#eee' // Default gray
     }
@@ -53,17 +57,26 @@ export function PasswordComplexityBar({ complexity }: PasswordComplexityBarProps
         return 'Strong' // Green
       case 5:
         return 'Very strong' // Blue
+      case 6:
+        return 'Excellent' // Purple
       default:
         return '' // Default gray
     }
   }
 
   return (
-    <div className='absolute -bottom-3 w-full px-1 flex flex-col items-start'>
+    <div className='w-full mt-1 flex flex-col items-start gap-1'>
+      {/* Complexity label */}
+      <div className='text-xs font-normal flex gap-1'>
+        <span style={{ color: colors.text_secondary }}>Password strength:</span>
+        <span className='text-xs' style={{ color: getColor(complexity) }}>
+          {getLabel(complexity)}
+        </span>
+      </div>
       {/* The bar */}
       <div
         className='relative w-full rounded-md'
-        style={{ marginBottom: '4px', height: '2px', backgroundColor: '#eee' }}
+        style={{ marginBottom: '4px', height: '6px', backgroundColor: '#eee' }}
       >
         <div
           style={{
@@ -78,10 +91,6 @@ export function PasswordComplexityBar({ complexity }: PasswordComplexityBarProps
           }}
         />
       </div>
-      {/* Complexity label */}
-      <span className='text-xs ml-1' style={{ color: getColor(complexity) }}>
-        {getLabel(complexity)}
-      </span>
     </div>
   )
 }

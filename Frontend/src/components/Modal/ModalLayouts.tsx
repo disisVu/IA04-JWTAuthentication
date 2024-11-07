@@ -15,11 +15,15 @@ export function PrimaryModal({ isOpen, children }: PrimaryModalProps) {
       sx={{
         width: {
           xs: '100%',
-          md: '640px'
+          sm: '640px'
+        },
+        padding: {
+          xs: '40px',
+          sm: '80px'
         },
         background: '#ffffff'
       }}
-      className='px-20 py-16 flex flex-col justify-center items-center rounded-xl shadow-lg'
+      className='py-16 flex flex-col justify-center items-center rounded-xl shadow-lg'
     >
       {children}
     </Box>

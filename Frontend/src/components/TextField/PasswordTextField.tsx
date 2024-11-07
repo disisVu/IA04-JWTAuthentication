@@ -87,7 +87,7 @@ export function PasswordTextField({
           autoComplete={autoComplete}
         />
       </FormControl>
-      <TextFieldIndicator indicator={error ? indicator : 'Valid'} color={error ? undefined : colors.valid} />
+      <TextFieldIndicator indicator={error ? indicator : ''} color={error ? undefined : colors.valid} />
     </div>
   )
 }

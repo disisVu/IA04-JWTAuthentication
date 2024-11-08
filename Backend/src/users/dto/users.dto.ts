@@ -1,6 +1,10 @@
 import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 export class UserRegisterDto {
+  @IsNotEmpty()
+  @Length(3)
+  username: string;
+
   @IsEmail()
   email: string;
 

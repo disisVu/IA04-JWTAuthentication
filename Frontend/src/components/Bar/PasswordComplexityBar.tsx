@@ -67,17 +67,14 @@ export function PasswordComplexityBar({ complexity }: PasswordComplexityBarProps
   return (
     <div className='w-full mt-1 flex flex-col items-start gap-1'>
       {/* Complexity label */}
-      <div className='text-xs font-normal flex gap-1'>
-        <span style={{ color: colors.text_secondary }}>Password strength:</span>
+      <div className='w-full flex justify-start sm:justify-end text-xs gap-1'>
+        <span style={{ color: colors.text_secondary }}>Password strength{complexity > 0 && ':'}</span>
         <span className='text-xs' style={{ color: getColor(complexity) }}>
           {getLabel(complexity)}
         </span>
       </div>
       {/* The bar */}
-      <div
-        className='relative w-full rounded-md'
-        style={{ marginBottom: '4px', height: '6px', backgroundColor: '#eee' }}
-      >
+      <div className='relative w-full rounded-md' style={{ height: '6px', backgroundColor: '#eee' }}>
         <div
           style={{
             width: getPercentage(complexity),

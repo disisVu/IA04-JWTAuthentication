@@ -5,13 +5,14 @@ import { Box } from '@mui/material'
 import { PasswordComplexityBar } from '~/components/Bar'
 import { ButtonPrimary } from '~/components/Button/FullWidth'
 import { PrimaryModal } from '~/components/Modal/ModalLayouts'
-import { EmailTextField, PasswordTextField } from '~/components/TextField'
+import { EmailTextField, FormTextField, PasswordTextField } from '~/components/TextField'
 import { colors } from '~/styles'
 import { usePasswordRegistrationTextField } from '~/hooks'
 import { registerUser } from '~/api/userApi'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { RegistrationFormInputs } from '~/types/form'
 import { computePasswordComplexity, emailRegex } from '../../utils'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 export function RegistrationModal() {
   const navigate = useNavigate()
@@ -27,6 +28,7 @@ export function RegistrationModal() {
     formState: { errors }
   } = useForm<RegistrationFormInputs>({
     defaultValues: {
+      username: '',
       email: '',
       password: '',
       confirmPassword: ''
@@ -78,6 +80,26 @@ export function RegistrationModal() {
             </span>
           </Box>
           <Box className='w-full flex flex-col items-start gap-7'>
+            {/* Input username */}
+            <Controller
+              name='username'
+              control={control}
+              rules={{
+                required: 'Required',
+                minLength: { value: 3, message: 'Must contain at least 3 characters.' }
+              }}
+              render={({ field: { value, onChange } }) => (
+                <FormTextField
+                  value={value}
+                  onChange={onChange}
+                  label='Username'
+                  placeholder='Enter username here'
+                  icon={faUser}
+                  indicator={errors.username ? errors.username.message || '' : ''}
+                  error={errors.username!}
+                />
+              )}
+            />
             {/* Input new email */}
             <Controller
               name='email'
@@ -96,13 +118,13 @@ export function RegistrationModal() {
               )}
             />
             {/* Input new password */}
-            <Box className='relative w-full'>
+            <Box className='relative w-full mb-2'>
               <Controller
                 name='password'
                 control={control}
                 rules={{
                   required: 'Required',
-                  minLength: { value: 8, message: 'Password must contain at least 8 characters.' },
+                  minLength: { value: 8, message: 'Must contain at least 8 characters.' },
                   validate: {
                     complexity: (value) => {
                       const complexity = computePasswordComplexity(value)
@@ -114,7 +136,7 @@ export function RegistrationModal() {
                   }
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <Box>
+                  <>
                     <PasswordTextField
                       value={value}
                       onChange={(val: string) => {
@@ -124,10 +146,10 @@ export function RegistrationModal() {
                       indicator={errors.password ? errors.password.message || '' : ''}
                       error={errors.password!}
                     />
-                    <Box className='ml-3'>
+                    <Box sx={{ bottom: '-10px' }} className='sm:absolute w-full pl-3'>
                       <PasswordComplexityBar complexity={computePasswordComplexity(value)} />
                     </Box>
-                  </Box>
+                  </>
                 )}
               />
               {password !== '' && <PasswordComplexityBar complexity={passwordComplexity} />}

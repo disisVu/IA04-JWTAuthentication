@@ -13,12 +13,18 @@ export class AuthService {
 
   // Register new User account
   async register(userRegistoDto: UserRegisterDto) {
-    const { email, password } = userRegistoDto;
+    const { username, email, password } = userRegistoDto;
+
+    // Check if username already exists
+    const existingUserName = await this.userService.findByUsername(username);
+    if (existingUserName) {
+      throw new BadRequestException('Username already exists.');
+    }
 
     // Check if email is already in use
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
-      throw new BadRequestException('User already exists.');
+      throw new BadRequestException('Email is already used.');
     }
 
     // Hash password

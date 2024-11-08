@@ -24,7 +24,20 @@ export const registerUser = async (email: string, password: string) => {
 export const loginUser = async (email: string, password: string) => {
   try {
     const response = await api.post('/users/login', { email, password })
-    return { success: true, message: response.data.message }
+
+    // Assuming your backend returns { accessToken } in the response data
+    if (response.data && response.data.accessToken) {
+      return {
+        success: true,
+        message: 'Login successful',
+        accessToken: response.data.accessToken // Return the access token
+      }
+    }
+
+    return {
+      success: false,
+      message: 'Login failed' // In case the token is not returned
+    }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       // Handle unauthorized (invalid credentials) response
@@ -32,6 +45,7 @@ export const loginUser = async (email: string, password: string) => {
         return { success: false, message: `Email doesn't exist or password is wrong` }
       }
     }
-    return { success: false, message: 'Login failed' }
+
+    return { success: false, message: 'Login failed' } // Generic failure message
   }
 }

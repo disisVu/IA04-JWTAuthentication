@@ -11,9 +11,11 @@ module.exports = {
       },
       screens: {
         // Custom breakpoints
-        'sm': '640px',
-        'md': '768px',
-        'lg': '990px',
+        'xs': '360px',
+        'sm': '600px',
+        'md': '960px',
+        'lg': '1280px',
+        'xl': '1920px'
       },
     },
   },

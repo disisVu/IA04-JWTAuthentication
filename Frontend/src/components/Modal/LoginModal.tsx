@@ -9,7 +9,7 @@ import { loginUser } from '~/api/userApi'
 import { PrimaryModal } from '~/components/Modal/ModalLayouts'
 import { ButtonPrimary } from '~/components/Button/FullWidth'
 import { EmailTextField, PasswordTextField } from '~/components/TextField'
-import { saveAuthentication } from '~/redux/authenticationSlice'
+import { setToken } from '~/store/reducers/authSlice'
 import { colors } from '~/styles'
 import { LoginFormInputs } from '~/types/form'
 import { emailRegex } from '~/utils'
@@ -41,15 +41,10 @@ export function LoginModal() {
 
     try {
       const result = await loginUser(data.email, data.password)
-      console.log(result)
+      console.log('Access token: ' + result)
       if (result.success) {
         setStatusMessage('Login successful')
-        dispatch(
-          saveAuthentication({
-            email: data.email,
-            password: data.password
-          })
-        )
+        dispatch(setToken(result.accessToken))
         // Delay for 2 seconds before navigating
         setTimeout(() => {
           navigateToHomePage()

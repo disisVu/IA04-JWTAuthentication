@@ -25,4 +25,10 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | undefined> {
     return this.userModel.findOne({ email }).exec();
   }
+
+  // Find a User by username
+  // + can check whether an username already exists
+  async findByUsername(username: string): Promise<User | undefined> {
+    return this.userModel.findOne({ username }).exec();
+  }
 }

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '~/store'
 import { useEffect, useState } from 'react'
 import { validateToken } from '~/api/userApi'
-import Loader from '~/components/Loader/LoaderIndicator'
+import { Loader } from '~/components/Loader/LoaderIndicator'
 
 export function ProtectedRoute() {
   const token = useSelector((state: RootState) => state.auth.accessToken) || localStorage.getItem('accessToken')

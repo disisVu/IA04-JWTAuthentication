@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { colors } from '~/styles/index'
-import Loader from '../Loader/LoaderIndicator'
+import { Loader } from '~/components/Loader/LoaderIndicator'
 
 interface ButtonPrimaryProps {
   enabled: boolean

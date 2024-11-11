@@ -27,6 +27,12 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
-    return req.user;
+    return this.authService.getProfile(req.user.email);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('validate-token')
+  validateToken() {
+    return { success: true, message: 'Token is valid' };
   }
 }

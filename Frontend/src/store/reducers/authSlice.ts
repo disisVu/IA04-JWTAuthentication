@@ -7,7 +7,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  accessToken: '',
+  accessToken: localStorage.getItem('accessToken') || '',
   userInfo: {
     username: '',
     email: ''
@@ -23,9 +23,12 @@ export const authenticationSlice = createSlice({
     },
     removeToken: (state: AuthState) => {
       state.accessToken = ''
+    },
+    saveUserInfo: (state: AuthState, action: PayloadAction<User>) => {
+      state.userInfo = action.payload
     }
   }
 })
 
-export const { setToken, removeToken } = authenticationSlice.actions
+export const { setToken, removeToken, saveUserInfo } = authenticationSlice.actions
 export default authenticationSlice.reducer

@@ -20,3 +20,15 @@ export class UserLoginDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class UserProfileDto {
+  username: string;
+  email: string;
+  createdAt: Date;
+
+  constructor() {
+    this.username = '';
+    this.email = '';
+    this.createdAt = new Date();
+  }
+}

@@ -2,17 +2,16 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
-
 import { Box } from '@mui/material'
 
-import { loginUser } from '~/api/userApi'
-import { PrimaryModal } from '~/components/Modal/ModalLayouts'
 import { ButtonPrimary } from '~/components/Button/FullWidth'
+import { PrimaryModal } from '~/components/Modal/ModalLayouts'
 import { EmailTextField, PasswordTextField } from '~/components/TextField'
-import { setToken } from '~/store/reducers/authSlice'
+import { saveUserInfo, setToken } from '~/store/reducers/authSlice'
 import { colors } from '~/styles'
-import { LoginFormInputs } from '~/types/form'
 import { emailRegex } from '~/utils'
+import { loginUser } from '~/api/userApi'
+import { LoginFormInputs } from '~/types/form'
 
 export function LoginModal() {
   const dispatch = useDispatch()
@@ -40,17 +39,21 @@ export function LoginModal() {
     setStatusMessage('')
 
     try {
-      const result = await loginUser(data.email, data.password)
-      console.log('Access token: ' + result)
-      if (result.success) {
+      const response = await loginUser({
+        email: data.email,
+        password: data.password
+      })
+      if (response.accessToken) {
         setStatusMessage('Login successful')
-        dispatch(setToken(result.accessToken))
+        console.log('Access token: ' + response)
+        dispatch(setToken(response.accessToken))
+        dispatch(saveUserInfo(response.userInfo))
         // Delay for 2 seconds before navigating
         setTimeout(() => {
           navigateToHomePage()
         }, 2000)
       } else {
-        setStatusMessage(result.message || 'Login failed')
+        setStatusMessage(response.message || 'Login failed')
       }
     } catch {
       setStatusMessage('An error occurred during registration')
@@ -60,7 +63,7 @@ export function LoginModal() {
   }
 
   const navigateToHomePage = () => {
-    navigate('/')
+    navigate('/profile')
   }
 
   const navigateToRegistration = () => {

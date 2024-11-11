@@ -2,7 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '~/users/users.service';
-import { UserLoginDto, UserRegisterDto } from '~/users/dto/users.dto';
+import {
+  UserLoginDto,
+  UserProfileDto,
+  UserRegisterDto,
+} from '~/users/dto/users.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +37,7 @@ export class AuthService {
 
     // Create new User
     const newUser = await this.userService.create({
+      username,
       email,
       password: hashedPassword,
     });
@@ -40,13 +45,16 @@ export class AuthService {
     return {
       message: 'User registered successfully.',
       user: {
+        username: newUser.username,
         email: newUser.email,
       },
     };
   }
 
   // Log into User account
-  async login(userLoginDto: UserLoginDto): Promise<{ accessToken: string }> {
+  async login(
+    userLoginDto: UserLoginDto,
+  ): Promise<{ accessToken: string; userInfo: UserProfileDto }> {
     const { email, password } = userLoginDto;
 
     // Find User by email
@@ -65,8 +73,23 @@ export class AuthService {
     const payload = { email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
+    // Get user info
+    const { user: userInfo } = await this.getProfile(user.email);
+
     return {
       accessToken,
+      userInfo,
+    };
+  }
+
+  async getProfile(email: string): Promise<{ user: UserProfileDto }> {
+    const user = await this.userService.getUserProfile(email);
+    if (!user) {
+      throw new BadRequestException(`User email doesn't exist.`);
+    }
+
+    return {
+      user,
     };
   }
 }

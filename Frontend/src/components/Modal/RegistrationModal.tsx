@@ -10,9 +10,9 @@ import { colors } from '~/styles'
 import { usePasswordRegistrationTextField } from '~/hooks'
 import { registerUser } from '~/api/userApi'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { RegistrationFormInputs } from '~/types/form'
-import { computePasswordComplexity, emailRegex } from '../../utils'
+import { computePasswordComplexity, emailRegex } from '~/utils'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { RegistrationFormInputs } from '~/types/form'
 
 export function RegistrationModal() {
   const navigate = useNavigate()
@@ -46,15 +46,19 @@ export function RegistrationModal() {
     setStatusMessage('')
 
     try {
-      const result = await registerUser(data.email, data.password)
-      if (result.success) {
+      const response = await registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password
+      })
+      if (response.success) {
         setStatusMessage('Register successful')
         // Delay for 2 seconds before navigating
         setTimeout(() => {
           navigateToLogin()
         }, 2000)
       } else {
-        setStatusMessage(result.message || 'Register failed')
+        setStatusMessage(response.message || 'Register failed')
       }
     } catch {
       setStatusMessage('An error occurred during registration')

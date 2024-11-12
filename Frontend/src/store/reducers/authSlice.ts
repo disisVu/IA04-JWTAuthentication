@@ -26,9 +26,13 @@ export const authenticationSlice = createSlice({
     },
     saveUserInfo: (state: AuthState, action: PayloadAction<User>) => {
       state.userInfo = action.payload
+    },
+    clearAuthState: (state: AuthState) => {
+      state.accessToken = ''
+      state.userInfo = new User()
     }
   }
 })
 
-export const { setToken, removeToken, saveUserInfo } = authenticationSlice.actions
+export const { setToken, removeToken, saveUserInfo, clearAuthState } = authenticationSlice.actions
 export default authenticationSlice.reducer

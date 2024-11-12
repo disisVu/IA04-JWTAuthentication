@@ -7,7 +7,7 @@ interface ProfileFieldProps {
 
 export function ProfileField({ label, value }: ProfileFieldProps) {
   return (
-    <div className='w-full grid grid-cols-12 items-center'>
+    <div className='w-full grid grid-row md:grid-cols-12 items-center'>
       <span style={{ color: colors.text_secondary }} className='col-span-2 flex justify-start'>
         {label}
       </span>

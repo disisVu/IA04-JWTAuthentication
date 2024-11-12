@@ -7,7 +7,6 @@ import { ButtonPrimary } from '~/components/Button/FullWidth'
 import { PrimaryModal } from '~/components/Modal/ModalLayouts'
 import { EmailTextField, FormTextField, PasswordTextField } from '~/components/TextField'
 import { colors } from '~/styles'
-import { usePasswordRegistrationTextField } from '~/hooks'
 import { registerUser } from '~/api/userApi'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { computePasswordComplexity, emailRegex } from '~/utils'
@@ -18,7 +17,6 @@ import { useSnackbar } from 'notistack'
 export function RegistrationModal() {
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
-  const { password, passwordComplexity } = usePasswordRegistrationTextField()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const {
@@ -155,7 +153,6 @@ export function RegistrationModal() {
                   </>
                 )}
               />
-              {password !== '' && <PasswordComplexityBar complexity={passwordComplexity} />}
             </Box>
             {/* Confirm password */}
             <Controller

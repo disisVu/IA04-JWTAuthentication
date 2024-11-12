@@ -1,10 +1,12 @@
 import { Outlet } from 'react-router-dom'
 import { Box } from '@mui/material'
+import { NavBar } from '~/components/Header'
 import { colors } from '~/styles'
 
 export function MainLayout() {
   return (
     <div style={{ color: colors.text_primary }} className='min-w-[100vw] flex flex-col justify-start items-center'>
+      <NavBar />
       <Box
         sx={{
           width: {
@@ -12,7 +14,7 @@ export function MainLayout() {
             lg: '1280px'
           }
         }}
-        className='w-full py-5 px-5'
+        className='w-full px-10 lg:px-0 py-10'
       >
         <Outlet />
       </Box>

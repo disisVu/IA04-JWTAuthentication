@@ -12,12 +12,13 @@ import { colors } from '~/styles'
 import { emailRegex } from '~/utils'
 import { loginUser } from '~/api/userApi'
 import { LoginFormInputs } from '~/types/form'
+import { useSnackbar } from 'notistack'
 
 export function LoginModal() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [statusMessage, setStatusMessage] = useState<string>('')
 
   const {
     control,
@@ -36,27 +37,26 @@ export function LoginModal() {
 
   const handleLogin = async (data: LoginFormInputs) => {
     setIsLoading(true)
-    setStatusMessage('')
 
     try {
       const response = await loginUser({
         email: data.email,
         password: data.password
       })
-      if (response.accessToken) {
-        setStatusMessage('Login successful')
-        console.log('Access token: ' + response)
-        dispatch(setToken(response.accessToken))
-        dispatch(saveUserInfo(response.userInfo))
+      if (response.success) {
+        const { accessToken, userInfo } = response.data
+        localStorage.setItem('accessToken', accessToken)
+        dispatch(setToken(accessToken))
+        dispatch(saveUserInfo(userInfo))
         // Delay for 2 seconds before navigating
         setTimeout(() => {
           navigateToHomePage()
         }, 2000)
-      } else {
-        setStatusMessage(response.message || 'Login failed')
       }
-    } catch {
-      setStatusMessage('An error occurred during registration')
+      enqueueSnackbar(response.message, { variant: response.success ? 'success' : 'error' })
+    } catch (error) {
+      console.log(error)
+      enqueueSnackbar('An error occurred during login', { variant: 'error' })
     } finally {
       setIsLoading(false)
     }
@@ -67,7 +67,7 @@ export function LoginModal() {
   }
 
   const navigateToRegistration = () => {
-    navigate('/user/registration')
+    navigate('/auth/registration')
   }
 
   return (
@@ -117,9 +117,6 @@ export function LoginModal() {
             />
           </Box>
           <Box className='w-full flex flex-col items-center'>
-            <span style={{ color: '#f00' }} className='mb-2 text-sm font-medium'>
-              {statusMessage}
-            </span>
             <ButtonPrimary enabled={true} text='Confirm' onClick={handleSubmit(onSubmit)} isLoading={isLoading} />
             <Box className='text-sm flex flex-row gap-2'>
               <span style={{ color: colors.text_secondary }}>Don't have an account?</span>

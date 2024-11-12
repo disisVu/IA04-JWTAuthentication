@@ -13,12 +13,13 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { computePasswordComplexity, emailRegex } from '~/utils'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { RegistrationFormInputs } from '~/types/form'
+import { useSnackbar } from 'notistack'
 
 export function RegistrationModal() {
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar()
   const { password, passwordComplexity } = usePasswordRegistrationTextField()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [statusMessage, setStatusMessage] = useState<string>('')
 
   const {
     control,
@@ -43,7 +44,6 @@ export function RegistrationModal() {
 
   const handleRegister = async (data: RegistrationFormInputs) => {
     setIsLoading(true)
-    setStatusMessage('')
 
     try {
       const response = await registerUser({
@@ -52,23 +52,22 @@ export function RegistrationModal() {
         password: data.password
       })
       if (response.success) {
-        setStatusMessage('Register successful')
         // Delay for 2 seconds before navigating
         setTimeout(() => {
           navigateToLogin()
         }, 2000)
-      } else {
-        setStatusMessage(response.message || 'Register failed')
       }
-    } catch {
-      setStatusMessage('An error occurred during registration')
+      enqueueSnackbar(response.message, { variant: response.success ? 'success' : 'error' })
+    } catch (error) {
+      console.log(error)
+      enqueueSnackbar('An error occurred during registration', { variant: 'error' })
     } finally {
       setIsLoading(false)
     }
   }
 
   const navigateToLogin = () => {
-    navigate('/user/login')
+    navigate('/auth/login')
   }
 
   return (
@@ -181,9 +180,6 @@ export function RegistrationModal() {
             />
           </Box>
           <Box className='w-full flex flex-col items-center'>
-            <span style={{ color: '#f00' }} className='mb-2 text-sm font-medium'>
-              {statusMessage}
-            </span>
             <ButtonPrimary enabled={true} text='Confirm' onClick={handleSubmit(onSubmit)} isLoading={isLoading} />
             <Box className='text-sm flex flex-row gap-2'>
               <span style={{ color: colors.text_secondary }}>Already have an account?</span>

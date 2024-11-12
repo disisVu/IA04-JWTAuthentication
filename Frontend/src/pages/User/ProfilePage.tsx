@@ -3,8 +3,10 @@ import { User } from '~/types/schema'
 import { getUserProfile } from '~/api/userApi'
 import { ProfileField } from '~/components/Field'
 import { Loader } from '~/components/Loader/LoaderIndicator'
+import { useSnackbar } from 'notistack'
 
 export function ProfilePage() {
+  const { enqueueSnackbar } = useSnackbar()
   const [profile, setProfile] = useState<User | undefined>(new User())
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -12,12 +14,11 @@ export function ProfilePage() {
     try {
       const response = await getUserProfile()
       if (response.success === true) {
-        setProfile(response.data)
-      } else {
-        console.log(response.message)
+        setProfile(response.data.user)
       }
+      enqueueSnackbar(response.message, { variant: response.success ? 'success' : 'error' })
     } catch {
-      console.log('Failed to fetch user profile.')
+      enqueueSnackbar('Failed to fetch profile.', { variant: 'error' })
     } finally {
       setIsLoading(false)
     }
@@ -25,6 +26,7 @@ export function ProfilePage() {
 
   useEffect(() => {
     fetchUserProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (isLoading) return <Loader />

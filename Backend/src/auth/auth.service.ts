@@ -1,12 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '~/users/users.service';
-import {
-  UserLoginDto,
-  UserProfileDto,
-  UserRegisterDto,
-} from '~/users/dto/users.dto';
+import { UserLoginDto, UserRegisterDto } from '~/users/dto/users.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,13 +18,21 @@ export class AuthService {
     // Check if username already exists
     const existingUserName = await this.userService.findByUsername(username);
     if (existingUserName) {
-      throw new BadRequestException('Username already exists.');
+      return {
+        success: false,
+        message: 'Username already exist.',
+        data: {},
+      };
     }
 
     // Check if email is already in use
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
-      throw new BadRequestException('Email is already used.');
+      return {
+        success: false,
+        message: 'Email already used.',
+        data: {},
+      };
     }
 
     // Hash password
@@ -43,30 +47,39 @@ export class AuthService {
     });
 
     return {
+      success: true,
       message: 'User registered successfully.',
-      user: {
-        username: newUser.username,
-        email: newUser.email,
+      data: {
+        user: {
+          username: newUser.username,
+          email: newUser.email,
+        },
       },
     };
   }
 
   // Log into User account
-  async login(
-    userLoginDto: UserLoginDto,
-  ): Promise<{ accessToken: string; userInfo: UserProfileDto }> {
+  async login(userLoginDto: UserLoginDto) {
     const { email, password } = userLoginDto;
 
     // Find User by email
     const user = await this.userService.findByEmail(email);
     if (!user) {
-      throw new BadRequestException(`User email doesn't exist.`);
+      return {
+        success: false,
+        message: `User email doesn't exist.`,
+        data: {},
+      };
     }
 
     // Verify password
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      throw new BadRequestException('Wrong password.');
+      return {
+        success: false,
+        message: 'Wrong password.',
+        data: {},
+      };
     }
 
     // Generate JWT
@@ -74,22 +87,36 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
 
     // Get user info
-    const { user: userInfo } = await this.getProfile(user.email);
+    const {
+      data: { user: userInfo },
+    } = await this.getProfile(user.email);
 
     return {
-      accessToken,
-      userInfo,
+      success: true,
+      message: 'Logged in successfully.',
+      data: {
+        accessToken,
+        userInfo,
+      },
     };
   }
 
-  async getProfile(email: string): Promise<{ user: UserProfileDto }> {
+  async getProfile(email: string) {
     const user = await this.userService.getUserProfile(email);
     if (!user) {
-      throw new BadRequestException(`User email doesn't exist.`);
+      return {
+        success: false,
+        message: `User email doesn't exist.`,
+        data: {},
+      };
     }
 
     return {
-      user,
+      success: true,
+      message: 'User profile fetched successfully.',
+      data: {
+        user: user,
+      },
     };
   }
 }

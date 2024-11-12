@@ -1,8 +1,13 @@
-import axios from 'axios'
 import { axiosPrivate as api } from '~/api/api'
 import { RootState, store } from '~/store'
-import { LoginUserRequest, RegisterUserRequest } from '~/types/api/user'
-import { User } from '~/types/schema'
+import {
+  GetUserProfileResponse,
+  LoginUserRequest,
+  LoginUserResponse,
+  RegisterUserRequest,
+  RegisterUserResponse,
+  ValidateTokenResponse
+} from '~/types/api/user'
 
 // Set up a request interceptor to add the Authorization header
 api.interceptors.request.use(
@@ -22,96 +27,38 @@ api.interceptors.request.use(
   }
 )
 
-export const validateToken = async (): Promise<{
-  success: boolean
-  message: string
-}> => {
+export const validateToken = async (): Promise<ValidateTokenResponse> => {
   try {
     const response = await api.get('/auth/validate-token')
-    return { success: true, message: response.data.message }
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 401) {
-        return { success: false, message: 'Unauthorized.' }
-      }
-    }
-    return { success: false, message: 'Unauthorized.' }
+    return response.data
+  } catch {
+    throw new Error('Error: Validate token')
   }
 }
 
-export const registerUser = async (data: RegisterUserRequest) => {
+export const registerUser = async (data: RegisterUserRequest): Promise<RegisterUserResponse> => {
   try {
     const response = await api.post('/auth/register', data)
-    return { success: true, message: response.data.message }
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      // Check if the error status is 409 for 'email already in use'
-      if (error.response.status === 409) {
-        return { success: false, message: 'Email already in use' }
-      }
-    }
-    return { success: false, message: 'Registration failed' }
+    return response.data
+  } catch {
+    throw new Error('Error: Register user')
   }
 }
 
-export const loginUser = async (data: LoginUserRequest) => {
+export const loginUser = async (data: LoginUserRequest): Promise<LoginUserResponse> => {
   try {
     const response = await api.post('/auth/login', data)
-
-    if (response.data && response.data.accessToken) {
-      // Save token to local storage
-      localStorage.setItem('accessToken', response.data.accessToken)
-
-      return {
-        success: true,
-        message: 'Login successful',
-        accessToken: response.data.accessToken,
-        userInfo: response.data.userInfo
-      }
-    }
-
-    return {
-      success: false,
-      message: 'Login failed'
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 401) {
-        return { success: false, message: `Email doesn't exist or password is wrong` }
-      }
-    }
-
-    return { success: false, message: 'Login failed' }
+    return response.data
+  } catch {
+    throw new Error('Error: Login user')
   }
 }
 
-export const getUserProfile = async (): Promise<{
-  success: boolean
-  message: string
-  data?: User
-}> => {
+export const getUserProfile = async (): Promise<GetUserProfileResponse> => {
   try {
     const response = await api.get('/auth/profile')
-
-    if (response.data?.user) {
-      const user: User = response.data.user
-      return {
-        success: true,
-        message: 'Successfully fetched user profile.',
-        data: user
-      }
-    }
-
-    return {
-      success: false,
-      message: 'Failed to fetch user profile.'
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 401) {
-        return { success: false, message: 'Unauthorized.' }
-      }
-    }
-    return { success: false, message: 'Failed to fetch user profile.' }
+    return response.data
+  } catch {
+    throw new Error('Error: Get user profile')
   }
 }

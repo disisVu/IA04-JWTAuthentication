@@ -32,7 +32,7 @@ export function ProfilePage() {
   if (isLoading) return <Loader />
 
   return (
-    <div className='w-full min-h-[200vh] flex flex-col items-start gap-10'>
+    <div className='w-full flex flex-col items-start gap-10'>
       <span className='text-4xl font-semibold'>Profile</span>
       <div className='w-full p-6 bg-white flex flex-col justify-start items-start gap-4 border shadow-md rounded-md'>
         <ProfileField label='Username' value={profile?.username} />

@@ -9,3 +9,6 @@ Ngô Anh Vũ - 20127669
 
 ### Application Deployment:
 [deployment](https://ia04-jwt-authentication-frontend-eta.vercel.app)
+
+### Note:
+backend first request takes up to 1 minute
